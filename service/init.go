@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"gin_test/config"
 	"gin_test/model"
 	"log"
 
@@ -13,8 +14,9 @@ import (
 var DbEngine *xorm.Engine
 
 func init() {
+	conf := config.Config
 	driverName := "mysql"
-	DsName := "root:xtpg3690@(localhost:3306)/gin?charset=utf8"
+	DsName := "root:" + conf.DbPassword + "@(localhost:3306)/gin?charset=utf8"
 	err := errors.New("")
 	DbEngine, err = xorm.NewEngine(driverName, DsName)
 	if err != nil && err.Error() != "" {
