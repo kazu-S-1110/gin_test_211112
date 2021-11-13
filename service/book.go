@@ -6,7 +6,7 @@ type BookService struct{}
 
 func (BookService) SetBook(book *model.Book) error {
 	_, err := DbEngine.Insert(book)
-	if err == nil {
+	if err != nil {
 		return err
 	}
 	return nil
