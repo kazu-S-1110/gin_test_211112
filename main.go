@@ -1,24 +1,27 @@
 package main
 
 import (
-	"net/http"
+	"gin_test/controller"
+	"gin_test/middleware"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
 	engine := gin.Default()
-	ua := ""
-	//use middleware
-	engine.Use(func(c *gin.Context) {
-		ua = c.GetHeader("User-Agent")
-		c.Next()
-	})
-	engine.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message":    "hello, world!",
-			"User-agent": ua,
-		})
-	})
+	// ミドルウェア
+	engine.Use(middleware.RecordUaAndTime)
+	// CRUD 書籍
+	bookEngine := engine.Group("/book")
+	{
+		v1 := bookEngine.Group("/v1")
+		{
+			v1.POST("/add", controller.BookAdd)
+			v1.GET("/list", controller.BookList)
+			v1.PUT("/update", controller.BookUpdate)
+			v1.DELETE("/delete", controller.BookDelete)
+		}
+	}
 	engine.Run(":3000")
 }
