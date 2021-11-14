@@ -4,6 +4,7 @@ import (
 	"gin_test/model"
 	"gin_test/service"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -49,12 +50,24 @@ func BookUpdate(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{
-		"status": "this is update",
+		"status": "ok",
 	})
 }
 
 func BookDelete(c *gin.Context) {
+	id := c.PostForm("id")
+	intId, err := strconv.ParseInt(id, 10, 0)
+	if err != nil {
+		c.String(http.StatusBadRequest, "Bad request")
+		return
+	}
+	bookService := service.BookService{}
+	err = bookService.DeleteBook(int(intId))
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Server Error")
+		return
+	}
 	c.JSON(http.StatusCreated, gin.H{
-		"status": "this is delete",
+		"status": "ok",
 	})
 }
